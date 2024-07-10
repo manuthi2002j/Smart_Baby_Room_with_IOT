@@ -1,0 +1,49 @@
+#include <Servo.h>
+
+#define SERVO_PIN 7 // Servo motor pin
+#define SENSOR_PIN 6 // Sound sensor pin
+
+Servo myServo;
+int angle = 0; // Initialize angle variable
+
+void setup() {
+  Serial.begin(9600); // Start serial communication at 9600 baud rate
+  myServo.attach(SERVO_PIN);
+  pinMode(SENSOR_PIN, INPUT); // Set sensor pin as input
+}
+
+void loop() {
+  int soundSensor = digitalRead(SENSOR_PIN); // Read the state of the sound sensor
+
+  // Print digital value of sensor pin to Serial Monitor
+  Serial.print("Digital Value of Sensor Pin: ");
+  delay(1000);
+  Serial.println(soundSensor);
+
+  if (soundSensor == HIGH) {
+    // Rotate servo slowly from 0 to 180 degrees
+    for (int angle = 0; angle <= 180; angle++) {
+      myServo.write(angle);
+      delay(15); // Adjust delay for smoother motion
+    }
+    
+    // Rotate servo slowly back from 180 to 0 degrees
+    for (int angle = 180; angle >= 0; angle--) {
+      myServo.write(angle);
+      delay(15); // Adjust delay for smoother motion
+    }
+  } else {
+    // If soundSensor is LOW
+    if (angle >= 90){
+      for(int a = angle ; a >=90 ; a--){
+        myServo.write(a);
+        delay(15);
+      }
+    } else {
+      for(int a = angle ; a <=90 ; a++){
+        myServo.write(a);
+        delay(15);
+      }
+    }
+  }
+}

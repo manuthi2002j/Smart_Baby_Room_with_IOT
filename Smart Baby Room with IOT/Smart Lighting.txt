@@ -1,0 +1,52 @@
+#include <WiFi.h>
+#include <WebServer.h>
+
+// Replace with your network credentials
+const char* ssid = "your_SSID";
+const char* password = "your_PASSWORD";
+
+// Create a web server on port 80
+WebServer server(80);
+
+// Pin where the LED is connected
+const int ledPin = 2; // Change to the appropriate pin for your setup
+
+void setup() {
+  Serial.begin(115200);
+
+  // Set LED pin as output
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW); // Initially turn off the LED
+
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  Serial.println("Connecting to WiFi...");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting...");
+  }
+  Serial.println("Connected!");
+
+  // Print the IP address
+  Serial.println(WiFi.localIP());
+
+  // Define the route for turning the LED on
+  server.on("/on", []() {
+    digitalWrite(ledPin, HIGH);
+    server.send(200, "text/plain", "LED is ON");
+  });
+
+  // Define the route for turning the LED off
+  server.on("/off", []() {
+    digitalWrite(ledPin, LOW);
+    server.send(200, "text/plain", "LED is OFF");
+  });
+
+  // Start the web server
+  server.begin();
+}
+
+void loop() {
+  // Handle client requests
+  server.handleClient();
+}

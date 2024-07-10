@@ -1,0 +1,34 @@
+#include <DHT.h> // Include the DHT library
+
+#define DHTPIN 2       // Digital pin connected to the DHT sensor
+#define LEDPIN 13      // Digital pin connected to the LED
+
+#define DHTTYPE DHT11  // Type of DHT sensor (DHT11, DHT21, DHT22)
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(9600);  // Start serial communication
+  pinMode(LEDPIN, OUTPUT); // Set LED pin as output
+  dht.begin(); // Initialize the DHT sensor
+}
+
+void loop() {
+  float temperature = dht.readTemperature(); // Read temperature from DHT sensor
+  
+  if (!isnan(temperature)) { // Check if reading is valid
+    Serial.print("Temperature: ");
+    Serial.println(temperature); // Print temperature to Serial Monitor
+    
+    // Turn on the LED if temperature is higher than 25.0°C, otherwise turn it off
+    if (temperature > 40.0) { // Adjust the threshold as needed
+      digitalWrite(LEDPIN, HIGH); // Turn on the LED
+    } else {
+      digitalWrite(LEDPIN, LOW); // Turn off the LED
+    }
+  } else {
+    Serial.println("DHT Error"); // Print error message if reading fails
+  }
+  
+  delay(2000); // Delay for stability
+}
